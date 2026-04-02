@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RUBY CAFE | Online Menü</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #f0fdf4; } /* Açık Yeşil Beyaz Karışımı */
+        .ruby-green { background-color: #166534; }
+        .text-ruby { color: #166534; }
+    </style>
+</head>
+<body>
+
+    <header class="relative h-64 flex items-center justify-center text-white">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=1000" alt="Cafe" class="absolute inset-0 w-full h-full object-cover brightness-50">
+        <div class="relative text-center">
+            <h1 class="text-5xl font-bold tracking-wider">RUBY CAFE</h1>
+            <p class="mt-2 italic">Tazeliğin ve Huzurun Adresi</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6">
+        <div id="menu-container" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
+            <p class="col-span-full text-center text-gray-500 py-10">Menü şu an hazırlanıyor, lütfen bekleyin...</p>
+        </div>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 ruby-green text-white p-4 shadow-lg flex justify-between items-center cursor-pointer" onclick="toggleCart()">
+        <span class="text-lg font-semibold"><i class="fas fa-shopping-basket mr-2"></i> Sepetim (<span id="cart-count">0</span>)</span>
+        <button class="bg-white text-ruby px-6 py-2 rounded-full font-bold">Siparişi Tamamla</button>
+    </div>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-end">
+        <div class="bg-white w-full rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-ruby">Siparişiniz</h2>
+                <button onclick="toggleCart()" class="text-gray-500 text-2xl">&times;</button>
+            </div>
+            <div id="cart-items" class="space-y-4">
+                </div>
+            <div class="mt-6 border-t pt-4">
+                <input type="text" id="table-no" placeholder="Masa Numaranız veya Adınız" class="w-full p-3 border rounded-lg mb-4 outline-none focus:ring-2 focus:ring-green-700">
+                <button onclick="sendOrder()" class="w-full ruby-green text-white py-4 rounded-xl font-bold text-lg">SİPARİŞİ GÖNDER</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function toggleCart() {
+            document.getElementById('cart-modal').classList.toggle('hidden');
+        }
+
+        // Sepetten Ürün Silme Fonksiyonu
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            const count = document.getElementById('cart-count');
+            count.innerText = cart.length;
+            container.innerHTML = '';
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-400">Sepetiniz boş.</p>';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <div>
+                            <p class="font-bold text-lg">${item}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 hover:bg-red-50 p-2 rounded-full">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+        
+        // Sipariş Gönderme (Firebase ile bağlanacak)
+        function sendOrder() {
+            const table = document.getElementById('table-no').value;
+            if(!table) { alert("Lütfen masa numarası veya isim girin!"); return; }
+            alert("Siparişiniz işletmeye iletildi!");
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+    </script>
+</body>
+</html>
